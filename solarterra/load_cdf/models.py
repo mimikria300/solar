@@ -304,14 +304,22 @@ class Variable(models.Model):
             return self.var_notes
 
     def get_axis_label(self):
-        
-        units = self.units
-        # units are stored as a str in db... but sometimes it's a space symbol and not an empty string
-        if units and units != 'None' and units != '' and units != None and units != ' ':
-            print('HERE ARE UNITS!!!', units, self.units, type(units))
-            return f'{self.lablaxis}, {self.units}'
-        else:
+        from solarterra.utils import format_units
+        pretty = format_units(self.units) if self.units else None
+        if self.lablaxis and pretty:
+            return f"{self.lablaxis}, {pretty}"
+        elif self.lablaxis:
             return self.lablaxis
+        elif pretty:
+            return pretty
+        else:
+            return self.name
+
+        # units = self.get_attribute_value('units')
+        # if units:
+        #     return f"{self.name}, {units}"
+        # else:
+        #     return self.name
 
     def get_attribute_value(self, attribute_title, get_type=False):
         attr = self.attributes.filter(title__iexact=attribute_title).first()

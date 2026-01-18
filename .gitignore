@@ -1,1 +1,14 @@
-**/__pycache__/
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+solar_venv/
+
+# Django
+*.log
+
+# Collected static and logs from submodules
+solarterra_submodules/static/
+solarterra_submodules/logs/
