@@ -258,7 +258,7 @@ class Variable(models.Model):
         return self.name
 
     def is_data(self):
-        return var_logic_type.lower() == 'data'
+        return self.var_logic_type.lower() == 'data'
 
     def is_decimal(self):
         if self.datatype:
@@ -469,7 +469,7 @@ class DynamicField(models.Model):
     def get_time_field(self):
         time_var = self.variable_instance.dataset.variables.filter(
             name__icontains='epoch').first()
-        if time_var is not None and self.variable_instance.depend_0.lower() == 'epoch':
+        if time_var is not None: #and self.variable_instance.depend_0.lower() == 'epoch': #this caused bug for DISCOVR, it has Epoch1
             return time_var.dynamic.first()
         else:
             return None

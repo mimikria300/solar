@@ -55,7 +55,7 @@ def variables(request):
             ts_start = tsi(ts_start_dt)
             ts_end = tsi(ts_end_dt)
 
-            dataset_instances = Dataset.objects.filter(id__in=sources)
+            dataset_instances = Dataset.objects.filter(id__in=sources).order_by('tag')
 
             context['var_form'] = VariablesForm(
                 dataset_instances=dataset_instances,
@@ -84,24 +84,25 @@ def plot(request):
         ts_tuple = (tsi(ts_start_dt), tsi(ts_end_dt))
         variables_form = VariablesForm(
             render_flag=False,
-            dataset_instances=Dataset.objects.all().order_by('tag'),
+            dataset_instances=Dataset.objects.all(),
             ts_tuple=ts_tuple,
             data=request.POST
         )
 
         if variables_form.is_valid():
             variables_list = variables_form.cleaned_data['variables']
-            # print(type(variables_list), variables_list)
-            var_instances = Variable.objects.filter(id__in=variables_list)
+            
+            print(Variable.objects.filter(id__in=variables_list).select_related('dataset').order_by('dataset__tag', 'id').query)
+            var_instances = Variable.objects.filter(id__in=variables_list).select_related('dataset').order_by('dataset__tag', 'id')
             var_list = list(var_instances.values_list('id', flat=True))
 
             context['complete_list'], context['plot_params'] = get_plots(
                 var_instances, ts_tuple, ts_tuple_dt)
 
-            dataset_ids = var_instances.distinct(
+            dataset_ids = var_instances.order_by().distinct(
                 'dataset').values_list('dataset', flat=True)
             dataset_instances = Dataset.objects.filter(id__in=dataset_ids)
-            # print(dataset_instances)
+            print(dataset_instances)
             prev_tuple = gni(ts_tuple, next_interval=False)
             prev_tuple_dt = (its(prev_tuple[0]), its(prev_tuple[1]))
             next_tuple = gni(ts_tuple, next_interval=True)

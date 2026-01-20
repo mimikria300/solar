@@ -5,6 +5,7 @@ from django import forms
 from pages.widgets import DateTimeWidget, DateTimePicker, CheckboxTableGroups
 import datetime as dt
 from django.db.models import Q
+import pdb
 
 
 class SourceForm(forms.Form):
@@ -80,6 +81,8 @@ class VariablesForm(forms.Form):
 
             if render_flag:
                 print("full_render")
+
+                #pdb.set_trace()
                 for dts in dataset_instances:
 
                     obj = dts.dynamic.resolve_class().objects.all()
